@@ -1,0 +1,8 @@
+total 8
+0 -rw-r--r--. 1 dvolarevic dvolarevic  0 Lis  6 12:28 output_3.txt
+4 -rw-r--r--. 1 dvolarevic dvolarevic 36 Lis  6 12:19 Zadatak_2.txt
+4 -rw-r--r--. 1 dvolarevic dvolarevic 61 Lis  6 12:28 Zadatak_3.sh
+total 12
+4 -rw-r--r--. 1 dvolarevic dvolarevic 210 Lis  6 12:28 output_3.txt
+4 -rw-r--r--. 1 dvolarevic dvolarevic  36 Lis  6 12:19 Zadatak_2.txt
+4 -rw-r--r--. 1 dvolarevic dvolarevic  61 Lis  6 12:28 Zadatak_3.sh
