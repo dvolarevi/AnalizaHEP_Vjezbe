@@ -1,4 +1,6 @@
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
 class ElementaryParticle {
@@ -19,4 +21,16 @@ class ElementaryParticle {
 		double p0, pT, E;
 		double px, py, pz;
 		
+};
+
+
+class Random {
+	private:
+		double min, max;
+	public:
+		Random(double min, double max);
+		Random();
+		double NextFloat(double min, double max);
+		double NextFloat(double min, double max, int precision);
+		double NextFloat();
 };
