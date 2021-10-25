@@ -147,7 +147,7 @@ void ElementaryParticle::bosonDecay(ElementaryParticle *c1, ElementaryParticle *
 			c2->mass = 4.18;
 			c2->bozon = 0;
 			}
-		Random R2(0,1);
+		Random R2(0,1,i+3);
 		r = R2.NextFloat();
 		double r2 = 1-r;
 		c1->px = r*px;
