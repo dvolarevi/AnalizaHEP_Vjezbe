@@ -29,8 +29,9 @@ double trans2;
 int i;
 
 tree->Branch("name", &name, "name/C");  
-tree->Branch("p1", p1, "p1[4]/D");  
-tree->Branch("p2", p2, "p2[4]/D");  
+tree->Branch("mass", &mass, "mass/D");
+tree->Branch("p1", p1, "p1[3]/D");  
+tree->Branch("p2", p2, "p2[3]/D");  
 tree->Branch("trans1", &trans1, "trans1/D");  
 tree->Branch("trans2", &trans2, "trans2/D");  
 if( !file ){
