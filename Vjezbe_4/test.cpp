@@ -1,54 +1,17 @@
-#include "Analyzer.h"
 #include <iostream>
-#include <math.h>
-#include <random>
-#include <time.h>
 #include <fstream>
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
 #include <TApplication.h>
+#include <iomanip>
+#include "Analyzer.h"
+#include <math.h>
+#include <random>
+#include <time.h>
+#include <stdlib.h>
 using namespace std;
-Analyzer::Analyzer(){
 
-};
-void Analyzer::convertTxtToRootFile(string path)
-{
-TFile *tf = new TFile("Analysis.root", "RECREATE");
-TTree *tree = new TTree("tree", "tree");
-std::ifstream file(path);
-string name;
-string iter;
-double mass;
-int bozon;
-double p0[3];
-double p1[3];
-double p2[3];
-double trans1;
-double trans2;
-int i;
-
-tree->Branch("name", &name, "name/C");  
-tree->Branch("p1", p1, "p1[4]/D");  
-tree->Branch("p2", p2, "p2[4]/D");  
-tree->Branch("trans1", &trans1, "trans1/D");  
-tree->Branch("trans2", &trans2, "trans2/D");  
-if( !file ){
-cerr << "Can't open " << endl;
-};
-while( file >> iter >> name >> mass >> bozon >> p0[0] >> p0[1] >> p0[2] >> p1[0] >> p1[1] >> p1[2]  >> p2[0] >> p2[1] >> p2[2])
-{
-trans1=sqrt(p1[0]*p1[0]+p1[1]*p1[1]);
-trans2=sqrt(p2[0]*p2[0]+p2[1]*p2[1]);
-   
-tree->Fill();
-}
-
-   
-tf->Write();
-tf->Close();
-file.close();
-};
 //#######################
 //rng
 //#######################
@@ -122,7 +85,7 @@ void ElementaryParticle::printInfo(){
 		cout<< "fermion."<< endl;
 		}
 	};
-double ElementaryParticle::Impuls(double p1, double p2, double p3){
+void ElementaryParticle::Impuls(double p1, double p2, double p3){
 	px = p1;
 	py = p2;
 	pz = p3;
@@ -228,3 +191,61 @@ void ElementaryParticle::MomentumInput(){
 	E=sqrt(pow(p1,2)+pow(p2,2)+pow(p3,2)+pow(mass,2));
 	cout << "\n Energija cestice = " << E << endl;
 	};
+
+
+void analyze()
+{
+	ElementaryParticle *c0, *c1, *c2;
+	c0 = new ElementaryParticle();
+	c1 = new ElementaryParticle();
+	c2 = new ElementaryParticle();
+
+	TH1F *hist = new TH1F("hist", "Histogram", 100, 0, 100);
+	hist->GetXaxis()->SetTitle("p_T");
+	hist->GetYaxis()->SetTitle("temp");
+
+
+	string iter;
+	int b;
+	double p0[4];
+	double p1[3], p2[3];
+	string ime;
+	ifstream file("/home/dvolarevic/Vjezbe/Vjezbe_4/ispis.txt");
+	
+	string tmp;
+	if( !file ){
+		cerr << "Can't open " << endl;
+	}
+	while( file >> iter >> ime >> p0[0] >> b >> p0[1] >> p0[2] >> p0[3] >> p1[0] >> p1[1] >> p1[2] >> p2[0] >> p2[1] >> p2[2]){
+		c0->ime="Higgs";
+		c0->mass=125.10;
+		c0->b=1;
+		c0->px=p0[1];
+		c0->py=p0[2];
+		c0->pz=p0[3];
+		c1->ime=ime;
+		c1->mass=p0[0];
+		c1->b=b;
+		c1->px=p1[0];
+		c1->py=p1[1];
+		c1->pz=p1[2];
+		c2->ime=ime;
+		c2->mass=p0[0];
+		c2->b=b;
+		c2->px=p2[0];
+		c2->py=p2[1];
+		c2->pz=p2[2];
+		c1->printInfo();
+		c1->Transversal();
+		hist->Fill(c1->pT);
+		
+	}
+	file.close();
+	
+	TCanvas *canvas = new TCanvas();
+	hist->Draw();
+	return 0;
+
+	
+	
+}
