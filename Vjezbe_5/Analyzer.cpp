@@ -64,14 +64,15 @@ void Analyzer::PlotHistogram()
 	      if (ientry < 0) break;
 	      nb = fChain->GetEntry(jentry);   nbytes += nb;
 	      // if (Cut(ientry) < 0) continue;
-		//cest1 = new TLorentzVector(p1[0],p1[1],p1[2],mass);
-		//cest2 = new TLorentzVector(p2[0],p2[1],p2[2],mass);
-		//rek = new TLorentzVector(p1[0]+p2[0],p1[1]+p2[1],p1[2]+p2[2],2*mass);
+		cest1 = new TLorentzVector(p1[0],p1[1],p1[2],mass);
+		cest2 = new TLorentzVector(p2[0],p2[1],p2[2],mass);
+		rek = new TLorentzVector();
+		*rek = *cest1+*cest2;
 		
 		hist1->Fill(trans1);
 		hist2->Fill(trans2);
-		//hist3->Fill(sqrt((rek->x * rek->x) + (rek->y * rek->y)));
-		hist3->Fill(sqrt((p1[0]+p2[0])*(p1[0]+p2[0])+(p1[1]+p2[1])*(p1[1]+p2[1])));
+		hist3->Fill(rek->Pt());
+		//hist3->Fill(sqrt((p1[0]+p2[0])*(p1[0]+p2[0])+(p1[1]+p2[1])*(p1[1]+p2[1])));
 	   }
 	TCanvas *canvas = new TCanvas("canvas", "canvas", 1400,600);
 	canvas->Divide(2,1);
