@@ -251,10 +251,18 @@ void analyzer::PlotHistogram(TString putanja)
 	dir->GetObject("candTree",tree);
 	Init(tree);
 
-TLorentzVector *cest1, *cest2, *cest3, *cest4, *zz1, *zz2, *higgy;
-	TLegend *leg = new TLegend(1,0.7,0.48,0.9);
-	leg->SetHeader("legend", "C");
-	leg->AddEntry(histo1,"rekonstruirana masa","f");
+	TLorentzVector *zz1 = new TLorentzVector();
+	TLorentzVector *zz2 = new TLorentzVector();
+	TLorentzVector *higgy = new TLorentzVector();
+	TLorentzVector *cest1 = new TLorentzVector();
+	TLorentzVector *cest2 = new TLorentzVector();
+	TLorentzVector *cest3 = new TLorentzVector();
+	TLorentzVector *cest4 = new TLorentzVector();
+
+	//za dobit bin
+	TFile fajl("/home/public/data/ggH125/ZZ4lAnalysis.root"); 
+    TH1F* histoCounter = (TH1F*)fajl.Get("ZZTree/Counters");
+	
 //skupljanje
 		if (fChain == 0) return;
 
@@ -266,27 +274,27 @@ TLorentzVector *cest1, *cest2, *cest3, *cest4, *zz1, *zz2, *higgy;
 		      if (ientry < 0) break;
 		      nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-			zz1 = new TLorentzVector();
-			zz2 = new TLorentzVector();
-			higgy = new TLorentzVector();
-			cest1 = new TLorentzVector();
-			cest1->SetPtEtaPhiM(GenLep1Pt, GenLep1Eta, GenLep1Phi, 0.000511);
-			cest2 = new TLorentzVector();
-			cest2->SetPtEtaPhiM(GenLep2Pt, GenLep2Eta, GenLep2Phi, 0.105658);
-			*zz1 = *cest1 + *cest2; 
-			cest3 = new TLorentzVector();
-			cest3->SetPtEtaPhiM(GenLep3Pt, GenLep3Eta, GenLep3Phi, 0.000511);
-			cest4 = new TLorentzVector();
-			cest4->SetPtEtaPhiM(GenLep4Pt, GenLep4Eta, GenLep4Phi, 0.105658);
-			*zz2 = *cest3 + *cest4; 
-			*higgy= *zz1 + *zz2;
+		float binContent = histoCounter->GetBinContent(40);
+		float w = (137.0 * 100 * xsec * overallEventWeight)/binContent;	
+		float w2 = (137.0 * 800 * xsec * overallEventWeight)/binContent;	
+		float diskriminanta = pow(1+((70*p_QQB_BKG_MCFM)/p_GG_SIG_ghg2_1_ghz1_1_JHUGen),-1);
+		float w_bkg = p_GG_SIG_ghg2_1_ghz1_1_JHUGen/diskriminanta;
+		float w_sig = p_QQB_BKG_MCFM/diskriminanta;
+		
+		cest1->SetPtEtaPhiM(LepPt->at(0), LepEta->at(0), LepPhi->at(0), 0.000511);
+		cest2->SetPtEtaPhiM(LepPt->at(1), LepEta->at(1), LepPhi->at(1), 0.105658);
+		*zz1 = *cest1 + *cest2; 
+		cest3->SetPtEtaPhiM(LepPt->at(2), LepEta->at(2), LepPhi->at(2), 0.000511);
+		cest4->SetPtEtaPhiM(LepPt->at(3), LepEta->at(3), LepPhi->at(3), 0.105658);
+		*zz2 = *cest3 + *cest4; 
+		*higgy= *zz1 + *zz2;
 
-			if(putanja.Contains("qqZZ")){
-				histo2->Fill(higgy->Mag());
-		   	}
-			else{
-				histo1->Fill(higgy->Mag());
-			}
+		if(putanja.Contains("qqZZ")){
+			histo2d1->Fill(higgy->M(),diskriminanta);
+		}
+		else{
+			histo2d2->Fill(higgy->M(),diskriminanta);
+		}
 
 	}
 

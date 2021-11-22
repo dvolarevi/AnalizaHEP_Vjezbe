@@ -1431,6 +1431,7 @@ public :
    TBranch        *b_p_Gen_GG_SIG_gXg5_1_gXz10_1_JHUGen;   //!
 
    TH1F *histo1, *histo2;
+	TH2F *histo2d1, *histo2d2;
 
    //analyzer(TTree *tree=0);
    analyzer();
@@ -1471,12 +1472,20 @@ analyzer::analyzer()
 {
    histo1 = new TH1F("h11", "mass", 50, 70, 170);
    histo2 = new TH1F("h22", "mass", 50, 70, 170);
+   histo2d1 = new TH2F("2d", "kin", 50, 0, 1, 50, 0, 1);
+   histo2d2 = new TH2F("2d2", "kin2", 50, 0, 1, 50, 0, 1);
+   
 
 }
 void analyzer::FillCanvass()
 {
-TCanvas *canvas = new TCanvas("canvas", "canvas", 1400,600);
+	TCanvas *canvas = new TCanvas("canvas", "canvas", 1400,600);
 	gStyle->SetOptStat(0);
+	canvas->Divide(2);
+	TLegend *leg1 = new TLegend(.7, .75, .89, .89);
+	//leg1->SetHeader("legend", "C");
+	leg1->AddEntry(histo2,"ZZ","f");
+	leg1->AddEntry(histo1,"higgy","f");
 
 	histo1->GetXaxis()->SetTitle("mass (GeV)");
 	histo1->GetYaxis()->SetTitle("broj");
@@ -1484,10 +1493,19 @@ TCanvas *canvas = new TCanvas("canvas", "canvas", 1400,600);
 	histo1->SetFillColor(kRed-4);
 	histo2->SetFillStyle(3020);
 	histo2->SetFillColor(kYellow-4);
-
-	histo1->Draw();
-	histo2->Draw("SAME");
-	canvas->SaveAs("spojeno.png");
+	//histo1->Draw("hist");
+	//histo2->Draw("hist same");
+	//leg1->Draw();
+	canvas->cd(1);
+	histo2d1->Draw("col");
+	
+	canvas->cd(2);
+	histo2d1->Draw("cont");
+	
+	canvas->Draw();
+	canvas->SaveAs("2d.png");
+	
+	
 }
 
 analyzer::~analyzer()
