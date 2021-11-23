@@ -1,9 +1,14 @@
 #define analyzer_cxx
 #include "analyzer.h"
+#include <TH1F.h>
+#include <TH2F.h>
 #include <TH2.h>
 #include <TStyle.h>
+#include <TGraph.h>
+#include <TColor.h>
 #include <TCanvas.h>
 #include <TLegend.h>
+#include <TFile.h>
 #include <TLorentzVector.h>
 
 void analyzer::Loop()
@@ -262,7 +267,10 @@ void analyzer::PlotHistogram(TString putanja)
 	//za dobit bin
 	TFile fajl("/home/public/data/ggH125/ZZ4lAnalysis.root"); 
     TH1F* histoCounter = (TH1F*)fajl.Get("ZZTree/Counters");
-	
+	float binContent = histoCounter->GetBinContent(40);
+	//float diskriminanta = pow(1+((70*p_QQB_BKG_MCFM)/p_GG_SIG_ghg2_1_ghz1_1_JHUGen),-1);
+	float bkg;
+	float sig;
 //skupljanje
 		if (fChain == 0) return;
 
@@ -274,12 +282,8 @@ void analyzer::PlotHistogram(TString putanja)
 		      if (ientry < 0) break;
 		      nb = fChain->GetEntry(jentry);   nbytes += nb;
 
-		float binContent = histoCounter->GetBinContent(40);
-		float w = (137.0 * 100 * xsec * overallEventWeight)/binContent;	
-		float w2 = (137.0 * 800 * xsec * overallEventWeight)/binContent;	
-		float diskriminanta = pow(1+((70*p_QQB_BKG_MCFM)/p_GG_SIG_ghg2_1_ghz1_1_JHUGen),-1);
-		float w_bkg = p_GG_SIG_ghg2_1_ghz1_1_JHUGen/diskriminanta;
-		float w_sig = p_QQB_BKG_MCFM/diskriminanta;
+		float w = (137.0 * 1000.0 * xsec * overallEventWeight)/binContent;		
+		
 		
 		cest1->SetPtEtaPhiM(LepPt->at(0), LepEta->at(0), LepPhi->at(0), 0.000511);
 		cest2->SetPtEtaPhiM(LepPt->at(1), LepEta->at(1), LepPhi->at(1), 0.105658);
@@ -287,15 +291,20 @@ void analyzer::PlotHistogram(TString putanja)
 		cest3->SetPtEtaPhiM(LepPt->at(2), LepEta->at(2), LepPhi->at(2), 0.000511);
 		cest4->SetPtEtaPhiM(LepPt->at(3), LepEta->at(3), LepPhi->at(3), 0.105658);
 		*zz2 = *cest3 + *cest4; 
+		
 		*higgy= *zz1 + *zz2;
 
 		if(putanja.Contains("qqZZ")){
-			histo2d1->Fill(higgy->M(),diskriminanta);
+			bkg =  1.0 / (1.0 + 70 * p_QQB_BKG_MCFM / p_GG_SIG_ghg2_1_ghz1_1_JHUGen);
+			histo1->Fill(bkg,w);
+			histo2d1->Fill(higgy->M(),bkg,w);
 		}
 		else{
-			histo2d2->Fill(higgy->M(),diskriminanta);
+			sig = 1.0 / (1.0 + p_QQB_BKG_MCFM / p_GG_SIG_ghg2_1_ghz1_1_JHUGen);
+			histo2->Fill(sig,w);
+			histo2d2->Fill(higgy->M(),sig,w);
 		}
-
+	
 	}
 
 

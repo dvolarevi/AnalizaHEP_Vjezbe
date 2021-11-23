@@ -10,14 +10,19 @@
 
 #include <TROOT.h>
 #include <TChain.h>
+#include <TH1F.h>
+#include <TH2F.h>
 #include <TH2.h>
 #include <TStyle.h>
+#include <TGraph.h>
+#include <TColor.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TFile.h>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <THStack.h>
 
 using namespace std;
 
@@ -1431,7 +1436,7 @@ public :
    TBranch        *b_p_Gen_GG_SIG_gXg5_1_gXz10_1_JHUGen;   //!
 
    TH1F *histo1, *histo2;
-	TH2F *histo2d1, *histo2d2;
+   TH2F *histo2d1, *histo2d2;
 
    //analyzer(TTree *tree=0);
    analyzer();
@@ -1470,10 +1475,10 @@ analyzer::analyzer(TTree *tree) : fChain(0)
 */
 analyzer::analyzer()
 {
-   histo1 = new TH1F("h11", "mass", 50, 70, 170);
-   histo2 = new TH1F("h22", "mass", 50, 70, 170);
-   histo2d1 = new TH2F("2d", "kin", 100, 40, 300, 100, 0, 1);
-   histo2d2 = new TH2F("2d2", "kin2", 100, 40, 300, 100, -1, 1);
+   histo1 = new TH1F("h11", "mass", 50, 0, 1);
+   histo2 = new TH1F("h22", "mass", 50, 0, 1);
+   histo2d1 = new TH2F("2d", "background", 50, 60, 170, 100, 0, 1);
+   histo2d2 = new TH2F("2d2", "signal", 100, 60, 170, 100, 0, 1);
    
 
 }
@@ -1481,11 +1486,11 @@ void analyzer::FillCanvass()
 {
 	TCanvas *canvas = new TCanvas("canvas", "canvas", 1400,600);
 	gStyle->SetOptStat(0);
-	canvas->Divide(2);
+	canvas->Divide(2,2);
 	TLegend *leg1 = new TLegend(.7, .75, .89, .89);
-	//leg1->SetHeader("legend", "C");
-	leg1->AddEntry(histo2,"ZZ","f");
-	leg1->AddEntry(histo1,"higgy","f");
+	leg1->SetHeader("legend", "C");
+	leg1->AddEntry(histo1,"ZZ","f");
+	leg1->AddEntry(histo2,"higgy","f");
 
 	histo1->GetXaxis()->SetTitle("mass (GeV)");
 	histo1->GetYaxis()->SetTitle("broj");
@@ -1493,14 +1498,29 @@ void analyzer::FillCanvass()
 	histo1->SetFillColor(kRed-4);
 	histo2->SetFillStyle(3020);
 	histo2->SetFillColor(kYellow-4);
-	//histo1->Draw("hist");
-	//histo2->Draw("hist same");
-	//leg1->Draw();
+	leg1->Draw();
 	canvas->cd(1);
-	histo2d1->Draw("colz");
+	histo1->GetXaxis()->SetTitle("diskr");
+	histo1->GetYaxis()->SetTitle("broj");
+	//histo1->Scale(1., "width");
+	histo1->Scale(1.0/histo1->Integral());
+	histo2->GetXaxis()->SetTitle("diskr");
+	histo2->GetYaxis()->SetTitle("broj");
+	histo2->Scale(1.0/histo2->Integral());
+	//histo2->Scale(1., "width");
+	histo2->Draw("hist");
+	histo1->Draw("hist same");
 	
-	canvas->cd(2);
-	histo2d1->Draw("cont3");
+	
+	canvas->cd(3);
+	histo2d1->GetXaxis()->SetTitle("m");
+	histo2d1->GetYaxis()->SetTitle("diskr");
+	histo2d1->Draw("cont2");
+	
+	canvas->cd(4);
+	histo2d2->GetXaxis()->SetTitle("m");
+	histo2d2->GetYaxis()->SetTitle("diskr");
+	histo2d2->Draw("cont3");
 	
 	canvas->Draw();
 	canvas->SaveAs("2d.png");
