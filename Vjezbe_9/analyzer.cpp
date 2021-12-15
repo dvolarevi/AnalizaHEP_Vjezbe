@@ -93,9 +93,13 @@ void Analyzer::plothisto()
 
 //racun
 
-	tau_log=mhln->GetMinimumX();
-	sigma_m=tau_log-mhln->GetX(mhln->GetMinimum(+1.0,1.0,tau_log-0.01));
-	sigma_p=mhln->GetX(mhln->GetMinimum()+1.0,tau_log,10.0)-tau_log;
+	tau_log=mhln->GetMinimum();
+	double minx = mhln->GetMinimumX();
+	double x1 = mhln->GetX(tau_log+1.0, 1.0, mhln->GetMinimumX()-0.0001);
+	double x2 = mhln->GetX(tau_log+1.0, mhln->GetMinimumX()+0.0001,1.5);
+
+	sigma_m=minx-x1;
+	sigma_p=x2-minx;
 	
 
 //crtanje
