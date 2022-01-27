@@ -176,6 +176,7 @@ public :
    virtual void     Show(Long64_t entry = -1);
    virtual void		draw();
    virtual void		MVATraining(TString metoda);
+   virtual void 	vadiroot();
    TTree *tree;
    //signalni
    TH1F *hs_ele_pt; 

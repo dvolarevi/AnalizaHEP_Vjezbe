@@ -4,6 +4,7 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TString.h>
+#include <TLegend.h>
 
 void analyzer::Loop(TString filename)
 {
@@ -182,4 +183,23 @@ void analyzer::MVATraining(TString metoda)
 	delete factory;
 	delete dataloader;
 
-}
+};
+
+void analyzer::vadiroot()
+{
+	TCanvas *c = new TCanvas("canv","canv",2000,1000);
+	TLegend *leg = new TLegend(.7, .15, .89, .25);
+	TFile *f = new TFile("TMVA.root");
+	
+	TH1D *signal = f->Get<TH1D>("dataset/Method_BDT/BDTG/MVA_BDTG_Train_S");
+	TH1D *back = f->Get<TH1D>("dataset/Method_BDT/BDTG/MVA_BDTG_Train_B");
+	
+	leg->AddEntry(signal,"signal","l");
+	leg->AddEntry(back,"background","l");
+	signal->SetLineColor(kRed);
+	signal->SetTitle("Train Correlation S i B");
+	signal->Draw();
+	back->Draw("same");
+	leg->Draw();
+	c->SaveAs("zadnje.png");
+};
