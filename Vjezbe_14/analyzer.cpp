@@ -84,9 +84,19 @@ void Analyzer::higsgaus()
 	double m, NH;
 		for(int j=10; j<695; j=j+5){
 			m=j/1.0;
+			/*
 			NH = pow((m-190),2)+0.02;
 			for(int i=0;i<10000;i++){
 				if(r3->Rndm()>NH/1000){
+					histo->Fill(r3->Gaus(m,0.0236*m));
+				}
+				else{
+					histo->Fill(r3->Exp(100));
+				}
+			}*/
+			NH = -pow((m-190),2)+0.02;
+			for(int i=0;i<10000;i++){
+				if(r3->Rndm()<NH){
 					histo->Fill(r3->Gaus(m,0.0236*m));
 				}
 				else{
@@ -167,9 +177,10 @@ void Analyzer::pval()
 			}
 		}
 		histo->Fit(ekspo,"Q","",j-10,j+10);
-			
+		histo->Reset();
+		
 		double chi = ekspo->GetChisquare();
-		double p_val=chisto->Integral(chisto->GetXaxis()->FindBin(chi),700)/chisto->Integral();
+		double p_val=chisto->Integral(chisto->GetXaxis()->FindBin(chi),200)/chisto->Integral();
 		//cout<< p_val<<endl;
 		graf->SetPoint(brojac,m,p_val);
 		brojac++;
@@ -180,4 +191,7 @@ void Analyzer::pval()
 	TLine *line = new TLine(0,1-0.9973,700,1-0.9973);
 	line->Draw();
 	c->SaveAs("zad2c.png");
+	
+	double z_score = TMath::Sqrt(2)*TMath::ErfcInverse(2*(1-0.9973));
+	cout << z_score << "sigma" << endl;
 };
